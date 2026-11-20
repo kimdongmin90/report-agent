@@ -120,10 +120,9 @@ def get_report(db:Session,rid:int)->dict:
 def list_reports(db:Session,title:str|None,limit:int,offset:int,
                  category_code:str|None=None,updated_after:datetime|None=None):
     """TODO B-07 · list_reports() — mentor와 동일한 함수 계약을 완성하세요."""
+    return repo.list_reports(db,title,limit,offset,category_code,updated_after)
     # TODO B-07: Repository의 title 필터·최신 수정일 정렬·limit/offset 페이징을 호출하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-07 · list_reports() TODO 미완성")
 
 
 def update_report(db:Session,rid:int,data:ReportUpdate)->dict:
