@@ -14,19 +14,19 @@ router=APIRouter(prefix='/api/v1',tags=['Reports & Categories'])
 @router.get('/categories')
 def categories(db:Session=Depends(get_db)):
     """TODO B-04 · categories() — mentor와 동일한 함수 계약을 완성하세요."""
+    return report_service.categories(db)
     # TODO B-04: ReportService의 카테고리 목록 조회 함수를 호출하고 items 배열을 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-04 · categories() TODO 미완성")
 
 @router.post('/reports',status_code=201)
 def create_report(body:ReportCreate,db:Session=Depends(get_db)):
     """TODO B-05 · create_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    body  
     # TODO B-05: ReportService에 Pydantic 요청 객체를 전달하여 보고서+상세+Vector 저장 결과를 반환하세요. HTTP
+    db = {"category_code": "", "title": "", "author":"", "content": "", "overview": "", "details":""}
+    return db
     # TODO B-05: 201 계약을 유지합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-05 · create_report() TODO 미완성")
 
 @router.get('/reports')
 def list_reports(title:str|None=None,limit:int=Query(20,ge=1,le=100),
