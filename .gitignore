@@ -13,3 +13,12 @@ __pycache__/
 
 # VS Code 개인 설정
 .vscode/
+
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+outputs/
+logs/
+*.log
