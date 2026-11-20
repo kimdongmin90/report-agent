@@ -49,10 +49,9 @@ def get_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
 @router.put('/reports/{report_id}')
 def update_report(body:ReportUpdate,report_id:int=Path(ge=1),db:Session=Depends(get_db)):
     """TODO B-08 · update_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    return report_service.update_report(db,report_id,body)
     # TODO B-08: 전체 교체 요청을 Service에 전달하고 revision/embedding_updated를 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-08 · update_report() TODO 미완성")
 
 @router.delete('/reports/{report_id}',status_code=204)
 def delete_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
