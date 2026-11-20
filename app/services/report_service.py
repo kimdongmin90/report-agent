@@ -86,12 +86,28 @@ def categories(db:Session)->dict:
 
 def create_report(db:Session,data:ReportCreate)->dict:
     """TODO B-05 · create_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    details=validate_details(data.category_code,data.details,data.content)
+    vector=encode_overview(data.overview) # DB 트랜잭션 시작 전에 느린 외부 모델 연산 수행
+    with db.begin():
+        category=repo.category_for_code(db,data.category_code)
+        row=Report(category_id=category.category_id,overview=data.overview,index_status='ready',revision=1)
+        db.add(row);db.flush() # INSERT가 실행되어 서버가 부여한 ID 사용. commit 전에는 미확정.
+        detail_kwargs={k:v for k,v in details.items() if k!='prompt_text'}
+        if data.category_code=='PROMPT':detail_kwargs['active_version_no']=1
+        detail=DETAIL_MODELS[data.category_code](report_id=row.report_id,title=data.title,
+               content=data.content,author=data.author,**detail_kwargs)
+        db.add(detail);db.flush() # PromptVersion의 FK가 참조할 Prompt 상세 행 생성.
+        if data.category_code=='PROMPT':
+            db.add(PromptVersion(report_id=row.report_id,version_no=1,prompt_text=details['prompt_text']))
+        db.add(ReportEmbedding(report_id=row.report_id,embedding=vector,
+                    model_name=settings.embedding_model,overview_hash=emb.overview_hash(data.overview),indexed_revision=1))
+        rid=row.report_id
+    return {'report_id':rid,'category_code':data.category_code,'title':data.title,
+            'author':data.author,'revision':1,'index_status':'ready','embedding_model':settings.embedding_model}
     # TODO B-05: details 검증과 벡터 생성을 먼저 수행하고 Transaction 안에서 reports+해당
     # TODO B-05: Detail+Embedding 저장. Prompt이면 PromptVersion v1도 생성하세요. 오류 시 rollback.
     # 선행 작업: embedding_client.encode()와 encode_overview()를 먼저 완성하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-05 · create_report() TODO 미완성")
 
 
 def get_report(db:Session,rid:int)->dict:
