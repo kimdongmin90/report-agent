@@ -65,7 +65,6 @@ def delete_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
 def summarize(report_id:int=Path(ge=1),body:SummaryRequest=Body(default_factory=SummaryRequest),
               db:Session=Depends(get_db)):
     """TODO B-13 · summarize() — mentor와 동일한 함수 계약을 완성하세요."""
+    return report_service.summarize_report(db,report_id,body.style,body.max_sentences)
     # TODO B-13: 원문 요약 Service를 실제 LLM과 연결하고 결과 JSON을 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-13 · summarize() TODO 미완성")
