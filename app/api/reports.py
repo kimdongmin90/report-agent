@@ -56,10 +56,10 @@ def update_report(body:ReportUpdate,report_id:int=Path(ge=1),db:Session=Depends(
 @router.delete('/reports/{report_id}',status_code=204)
 def delete_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
     """TODO B-09 · delete_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    report_service.delete_report(db,report_id)
+    return Response(status_code=204)
     # TODO B-09: 삭제를 실행한 뒤 본문 없는 HTTP 204 Response를 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-09 · delete_report() TODO 미완성")
 
 @router.post('/reports/{report_id}/summarize')
 def summarize(report_id:int=Path(ge=1),body:SummaryRequest=Body(default_factory=SummaryRequest),
