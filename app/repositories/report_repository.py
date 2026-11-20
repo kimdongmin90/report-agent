@@ -43,12 +43,21 @@ def plain_value(obj:Any):
 
 def serialize_report(report:Report,category:ReportCategory,detail)->dict:
     """TODO B-06 · serialize_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    keys=[k for k in DETAIL_FIELDS[category.code] if k!='active_version_no']
+    values={k:plain_value(getattr(detail,k)) for k in keys}
+    if category.code=='PROMPT': values['active_version_no']=detail.active_version_no
+    return {
+        'report_id':report.report_id,'category_code':category.code,
+        'title':detail.title,'content':detail.content,'author':detail.author,
+        'overview':report.overview,'details':values,
+        'revision':report.revision,'index_status':report.index_status,
+        # DB column spelling create_at/update_at. API contract uses created_at/updated_at.
+        'created_at':plain_value(detail.create_at), 'updated_at':plain_value(detail.update_at)
+    }
     # TODO B-06: report/category/detail을 API-03의 단일 응답 형식으로 묶으세요.
     # TODO B-06: title/content/author는 상세 테이블에서 가져오세요.
     # created_at/updated_at와 details의 시각도 plain_value()로 UTC 직렬화하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · serialize_report() TODO 미완성")
 
 def read_report(db:Session,rid:int)->dict:
     """TODO B-06 · read_report() — mentor와 동일한 함수 계약을 완성하세요."""
