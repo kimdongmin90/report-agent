@@ -68,6 +68,8 @@ def validate_details(code:str,details:dict,content:str|None=None)->dict:
 
 def encode_overview(overview:str)->list[float]:
     """TODO B-10 · encode_overview() — mentor와 동일한 함수 계약을 완성하세요."""
+    try: return emb.encode([overview],kind='passage')[0]
+    except Exception as e:raise DomainError(503,'EMBEDDING_UNAVAILABLE','E5 Embedding을 생성하지 못했습니다.') from e
     # TODO B-10: Embedding Client로 passage 개요 1건을 E5-small 384차원 벡터로 생성하고 실패 시 503으로
     # TODO B-10: 구분하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
