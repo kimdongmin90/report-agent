@@ -21,10 +21,8 @@ def categories(db:Session=Depends(get_db)):
 @router.post('/reports',status_code=201)
 def create_report(body:ReportCreate,db:Session=Depends(get_db)):
     """TODO B-05 · create_report() — mentor와 동일한 함수 계약을 완성하세요."""
-    body  
+    return report_service.create_report(db, body)  
     # TODO B-05: ReportService에 Pydantic 요청 객체를 전달하여 보고서+상세+Vector 저장 결과를 반환하세요. HTTP
-    db = {"category_code": "", "title": "", "author":"", "content": "", "overview": "", "details":""}
-    return db
     # TODO B-05: 201 계약을 유지합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
 
