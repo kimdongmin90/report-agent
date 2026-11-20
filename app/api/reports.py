@@ -33,8 +33,7 @@ def list_reports(title:str|None=None,limit:int=Query(20,ge=1,le=100),
     """TODO B-07 · list_reports() — mentor와 동일한 함수 계약을 완성하세요."""
     if not at_least('intermediate') and (category_code is not None or updated_after is not None):
         raise DomainError(422,'VALIDATION_ERROR','추가 필터는 Intermediate 기능입니다.')
-    return
-report_service.list_reports(db,title,limit,offset,category_code,updated_after)
+    return report_service.list_reports(db,title,limit,offset,category_code,updated_after)
     # TODO B-07: Title/limit/offset을 서비스에 전달하세요. Basic 범위에서는 추가 Category/updated_after
     # TODO B-07: 필터를 거절합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
