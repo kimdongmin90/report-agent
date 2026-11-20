@@ -42,10 +42,9 @@ report_service.list_reports(db,title,limit,offset,category_code,updated_after)
 @router.get('/reports/{report_id}')
 def get_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
     """TODO B-06 · get_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    return report_service.get_report(db, report_id)
     # TODO B-06: 경로 report_id로 조회한 응답을 반환하세요. 미존재 ID는 DomainError 404를 유지합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · get_report() TODO 미완성")
 
 @router.put('/reports/{report_id}')
 def update_report(body:ReportUpdate,report_id:int=Path(ge=1),db:Session=Depends(get_db)):
