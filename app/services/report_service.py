@@ -27,11 +27,43 @@ TIME_FIELDS={'meeting_at'}
 
 def validate_details(code:str,details:dict,content:str|None=None)->dict:
     """TODO B-05 · validate_details() — mentor와 동일한 함수 계약을 완성하세요."""
+    needed=INPUT_FIELDS.get(code)
+    if needed is None:raise DomainError(422,'VALIDATION_ERROR','알 수 없는 보고서 종류입니다.')
+    if not isinstance(details,dict):raise DomainError(422,'VALIDATION_ERROR','details는 객체여야 합니다.')
+    required=needed-OPTIONAL.get(code,set())
+    missing=required-details.keys()
+    extras=details.keys()-needed
+    if missing or extras:
+        raise DomainError(422,'VALIDATION_ERROR',f'details 필드 누락/초과: {sorted(missing)} / {sorted(extras)}')
+    result={}
+    for k in needed:
+        v=details.get(k,'' if k in OPTIONAL.get(code,set()) else None)
+        if k in DATE_FIELDS:
+            try: result[k]=date.fromisoformat(v) if isinstance(v,str) else v
+            except (TypeError,ValueError):raise DomainError(422,'VALIDATION_ERROR',f'{k}는 YYYY-MM-DD 형식이어야 합니다.')
+            if not isinstance(result[k],date) or isinstance(result[k],datetime):
+                raise DomainError(422,'VALIDATION_ERROR',f'{k} 날짜 형식 오류')
+        elif k in TIME_FIELDS:
+            try: d=datetime.fromisoformat(v.replace('Z','+00:00')) if isinstance(v,str) else v
+            except (TypeError,ValueError):raise DomainError(422,'VALIDATION_ERROR',f'{k} ISO 8601 형식 오류')
+            if not isinstance(d,datetime) or d.tzinfo is None:
+                raise DomainError(422,'VALIDATION_ERROR',f'{k}에 시간대가 필요합니다.')
+            result[k]=d
+        elif not isinstance(v,str) or (k not in OPTIONAL.get(code,set()) and not v.strip()):
+            raise DomainError(422,'VALIDATION_ERROR',f'{k}는 비어 있지 않은 문자열이어야 합니다.')
+        else: result[k]=v
+    if code=='PROMPT' and content is not None and content !=result['prompt_text']:
+        raise DomainError(422,'VALIDATION_ERROR','Prompt content와 details.prompt_text는 동일해야 합니다.')
+    if at_least('intermediate'):
+        try:
+            # data validation 결과는 같은 자료형의 date/datetime 객체를 보유합니다.
+            return DETAIL_SCHEMAS[code].model_validate(details).model_dump()
+        except ValidationError as e:
+            raise DomainError(422,'VALIDATION_ERROR','카테고리별 상세 속성을 확인하세요.') from e
+    return result
     # TODO B-05: 6개 카테고리의 details 필수·선택 필드 및 날짜·시각·공백을 검증하고 정확한 자료형으로 변환하세요. Prompt는
     # TODO B-05: content==prompt_text 검증.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-05 · validate_details() TODO 미완성")
 
 
 def encode_overview(overview:str)->list[float]:
@@ -39,8 +71,6 @@ def encode_overview(overview:str)->list[float]:
     # TODO B-10: Embedding Client로 passage 개요 1건을 E5-small 384차원 벡터로 생성하고 실패 시 503으로
     # TODO B-10: 구분하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-10 · encode_overview() TODO 미완성")
 
 
 def categories(db:Session)->dict:
