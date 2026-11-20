@@ -10,10 +10,10 @@ from app.services.errors import DomainError
 
 def category_for_code(db:Session,code:str)->ReportCategory:
     """TODO B-05 · category_for_code() — mentor와 동일한 함수 계약을 완성하세요."""
+    if category is None:raise DomainError(422,'VALIDATION_ERROR','등록되지 않은 카테고리입니다.')
+    return category
     # TODO B-05: code에 대응하는 ReportCategory 1건을 조회하고 없으면 422 에러를 발생시키세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-05 · category_for_code() TODO 미완성")
 
 def get_report_and_detail(db:Session,rid:int,lock:bool=False):
     """TODO B-06 · get_report_and_detail() — mentor와 동일한 함수 계약을 완성하세요."""
