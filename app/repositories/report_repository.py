@@ -31,11 +31,15 @@ def get_report_and_detail(db:Session,rid:int,lock:bool=False):
 
 def plain_value(obj:Any):
     """TODO B-06 · plain_value() — mentor와 동일한 함수 계약을 완성하세요."""
+    if isinstance(obj,datetime):
+        if obj.tzinfo is None or obj.utcoffset() is None:
+            raise DomainError(500,'DATA_INTEGRITY_ERROR','시각 데이터에 시간대가 없습니다.')
+        return obj.astimezone(timezone.utc).isoformat().replace('+00:00','Z')
+    if isinstance(obj,date):return obj.isoformat()
+    return obj
     # TODO B-06: datetime은 UTC로 변환한 ISO 8601 문자열(Z), date는 YYYY-MM-DD로 반환하세요.
     # 시간대 없는 datetime은 DATA_INTEGRITY_ERROR(500)로 구분하고 그 외 값은 그대로 반환합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · plain_value() TODO 미완성")
 
 def serialize_report(report:Report,category:ReportCategory,detail)->dict:
     """TODO B-06 · serialize_report() — mentor와 동일한 함수 계약을 완성하세요."""
