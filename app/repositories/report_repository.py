@@ -17,11 +17,17 @@ def category_for_code(db:Session,code:str)->ReportCategory:
 
 def get_report_and_detail(db:Session,rid:int,lock:bool=False):
     """TODO B-06 · get_report_and_detail() — mentor와 동일한 함수 계약을 완성하세요."""
+    stmt=select(Report).where(Report.report_id==rid)
+    if lock:stmt=stmt.with_for_update()
+    report=db.scalar(stmt)
+    if report is None:raise DomainError(404,'REPORT_NOT_FOUND','요청한 보고서를 찾을 수 없습니다.')
+    category=db.get(ReportCategory,report.category_id)
+    detail=db.get(DETAIL_MODELS[category.code],rid)
+    if detail is None:raise DomainError(500,'DATA_INTEGRITY_ERROR','보고서 상세 행이 누락되었습니다.')
+    return report,category,detail
     # TODO B-06: 공통 Report + Category + 일치하는 상세 모델을 조회하세요. 잠금이 필요하면 with_for_update를
     # TODO B-06: 적용하고 없는 ID는 404.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · get_report_and_detail() TODO 미완성")
 
 def plain_value(obj:Any):
     """TODO B-06 · plain_value() — mentor와 동일한 함수 계약을 완성하세요."""
