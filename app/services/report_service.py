@@ -199,9 +199,15 @@ def delete_report(db:Session,rid:int)->None:
 
 def summarize_report(db:Session,rid:int,style:str='brief',max_sentences:int=3)->dict:
     """TODO B-13 · summarize_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    record=repo.read_report(db,rid)
+    result=llm_client.summarize(record['content'],style,max_sentences,allow_structured=at_least('intermediate'),
+                                retries=2 if at_least('advanced') else 0)
+    payload={'report_id':rid,'source_revision':record['revision'],**result,
+            'model':settings.llm_model,'status':'completed'}
+    if at_least('advanced') and llm_client.get_last_usage() is not None:
+        payload['usage']=llm_client.get_last_usage()
+    return payload
     # TODO B-13: RDB의 상세 content를 조회해 실제 LLM Client를 호출하고
     # TODO B-13: report_id/source_revision/summary/model/status를 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-13 · summarize_report() TODO 미완성")
 
