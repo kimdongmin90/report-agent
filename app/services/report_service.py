@@ -189,10 +189,12 @@ def update_report(db:Session,rid:int,data:ReportUpdate)->dict:
 
 def delete_report(db:Session,rid:int)->None:
     """TODO B-09 · delete_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    with db.begin():
+        report=db.get(Report,rid)
+        if report is None:raise DomainError(404,'REPORT_NOT_FOUND','보고서가 없습니다.')
+        db.delete(report)
     # TODO B-09: reports에서 보고서를 제거하고 FK CASCADE로 상세·Vector·버전을 함께 삭제하세요. 없는 ID면 404.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-09 · delete_report() TODO 미완성")
 
 
 def summarize_report(db:Session,rid:int,style:str='brief',max_sentences:int=3)->dict:
