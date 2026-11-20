@@ -112,10 +112,9 @@ def create_report(db:Session,data:ReportCreate)->dict:
 
 def get_report(db:Session,rid:int)->dict:
     """TODO B-06 · get_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    return repo.read_report(db,rid)
     # TODO B-06: Repository에서 공통 보고서와 올바른 상세 행을 가져와 API JSON으로 반환하세요.
-    # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · get_report() TODO 미완성")
+    # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.    
 
 
 def list_reports(db:Session,title:str|None,limit:int,offset:int,
