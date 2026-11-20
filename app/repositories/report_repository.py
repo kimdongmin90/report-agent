@@ -61,11 +61,9 @@ def serialize_report(report:Report,category:ReportCategory,detail)->dict:
 
 def read_report(db:Session,rid:int)->dict:
     """TODO B-06 · read_report() — mentor와 동일한 함수 계약을 완성하세요."""
+    return serialize_report(*get_report_and_detail(db,rid))
     # TODO B-06: get_report_and_detail과 serialize_report를 연결해 단일 보고서를 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-06 · read_report() TODO 미완성")
-
 
 def list_reports(db:Session, title:str|None,limit:int,offset:int,
                  category_code:str|None=None,updated_after:datetime|None=None)->dict:
