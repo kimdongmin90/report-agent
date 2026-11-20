@@ -31,11 +31,13 @@ def list_reports(title:str|None=None,limit:int=Query(20,ge=1,le=100),
                  offset:int=Query(0,ge=0),category_code:CategoryCode|None=None,
                  updated_after:datetime|None=None,db:Session=Depends(get_db)):
     """TODO B-07 · list_reports() — mentor와 동일한 함수 계약을 완성하세요."""
+    if not at_least('intermediate') and (category_code is not None or updated_after is not None):
+        raise DomainError(422,'VALIDATION_ERROR','추가 필터는 Intermediate 기능입니다.')
+    return
+report_service.list_reports(db,title,limit,offset,category_code,updated_after)
     # TODO B-07: Title/limit/offset을 서비스에 전달하세요. Basic 범위에서는 추가 Category/updated_after
     # TODO B-07: 필터를 거절합니다.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-07 · list_reports() TODO 미완성")
 
 @router.get('/reports/{report_id}')
 def get_report(report_id:int=Path(ge=1),db:Session=Depends(get_db)):
