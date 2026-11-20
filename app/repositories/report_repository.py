@@ -68,7 +68,20 @@ def read_report(db:Session,rid:int)->dict:
 def list_reports(db:Session, title:str|None,limit:int,offset:int,
                  category_code:str|None=None,updated_after:datetime|None=None)->dict:
     """TODO B-07 · list_reports() — mentor와 동일한 함수 계약을 완성하세요."""
+    conditions=[];params={'limit':limit,'offset':offset}
+    if title:
+        # LIKE 특수문자를 escape하지 않으면 사용자 '%'가 와일드카드가 됩니다.
+        escaped=title.replace('\\','\\\\').replace('%','\\%').replace('_','\\_')
+        conditions.append("title ILIKE :pat ESCAPE '\\'")
+        params['pat']='%'+escaped+'%'
+    if category_code:
+        conditions.append('category_code=:category_code');params['category_code']=category_code
+    if updated_after:
+        conditions.append('update_at>=:updated_after');params['updated_after']=updated_after
+    where=(' WHERE '+' AND '.join(conditions)) if conditions else ''
+    total=db.execute(text('SELECT count(*) FROM report_read_view'+where),params).scalar_one()
+    rows=db.execute(text('SELECT report_id,category_code,title,revision FROM report_read_view'+where+
+                         ' ORDER BY update_at DESC,report_id DESC LIMIT :limit OFFSET :offset'),params).mappings().all()
+    return {'items':[dict(r) for r in rows],'total':total,'limit':limit,'offset':offset}
     # TODO B-07: report_read_view를 이용해 6종 통합 제목 조회·정렬·페이지/total을 반환하세요. SQL 값은 바인딩하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-07 · list_reports() TODO 미완성")
