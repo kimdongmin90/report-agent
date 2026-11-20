@@ -77,11 +77,11 @@ def encode_overview(overview:str)->list[float]:
 
 def categories(db:Session)->dict:
     """TODO B-04 · categories() — mentor와 동일한 함수 계약을 완성하세요."""
+    rows=db.scalars(select(ReportCategory).order_by(ReportCategory.category_id)).all()
+    return {'items':[{'category_id':r.category_id,'code':r.code,'name':r.name,'description':r.description} for r in rows]}
     # TODO B-04: report_categories를 PK 오름차순으로 읽어 category_id/code/name/description의
     # TODO B-04: items 리스트를 반환하세요.
     # 입력·반환형과 예외·상태코드는 요구사항 명세서/API 계약을 참조합니다.
-    # 정답 구현 후 아래 예외를 지우고 로직을 작성하세요.
-    raise NotImplementedError("B-04 · categories() TODO 미완성")
 
 
 def create_report(db:Session,data:ReportCreate)->dict:
